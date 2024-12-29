@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    {% load static %}
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'webs/images/favicon.ico' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'webs/css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+<style type="text/css">
+
+    @font-face {
+        font-family: 'EliceDigitalBaeum-Bd';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_elice@1.0/EliceDigitalBaeum-Bd.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
+    /* 전체 화면 배경 이미지 설정 */
+    body {
+    background-image: url("{% static 'webs/images/background2.png' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    }
+
+    #app { background-color: #FFF3D6; padding: 0; position: relative;}
+    .logo { width: 180px; margin: 160px auto; display: block; }
+
+    /* 물결 애니메이션 */
+    @keyframes waveIn {
+        0% {
+            opacity: 0;
+            transform: translateX(-100px) rotate(0deg); /* 왼쪽으로 이동하고, 회전 없음 */
+        }
+        25% {
+            opacity: 0.5;
+            transform: translateX(30px) rotate(10deg); /* 오른쪽으로 이동하고, 살짝 회전 */
+        }
+        50% {
+            opacity: 1;
+            transform: translateX(-20px) rotate(-10deg); /* 왼쪽으로 이동하고, 반대 방향으로 회전 */
+        }
+        75% {
+            transform: translateX(10px) rotate(5deg); /* 다시 오른쪽으로 이동 */
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0) rotate(0deg); /* 원래 위치로 이동하고, 회전 없음 */
+        }
+    }
+
+    /* 모아모아 타이틀에 애니메이션 적용 */
+    .moamoa-title-index {
+        font-family: 'Jua', sans-serif;
+        color: #ffbd41;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        text-align: center;
+
+    /* 애니메이션 속성 */
+    opacity: 0;
+    animation: waveIn 1.5s ease-out forwards; /* 1.5초 동안 물결 애니메이션 적용 */
+    }
+
+    .how-to-use {
+        width: 30px;
+        height: 30px;
+        margin: 20px;
+        float: right;
+    }
+
+    .speech-bubble {
+        position: absolute;
+        right: 10px;
+        top: 60px;
+        width: 200px;
+        padding: 10px;
+        background-color: #cdedc9;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 14px;
+        z-index: 999;
+        text-align: center;
+    }
+
+    .speech-bubble:before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        right: 20px;
+        border-width: 10px;
+        border-style: solid;
+        border-color: transparent transparent #cdedc9 transparent; 
+    }
+</style>
+<title>{% block title %}모아모아 :: 똑똑한 용돈 관리 습관{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="container">
+            <div class="row justify-content-evenly">
+
+                <div class="col-lg-5 d-none d-lg-block">
+                    <div class="position-relative">
+
+                        <div class="mt-3">
+                            <div class="mb-2 leftdesc">
+                                <!-- 타이틀 -->
+                                <h2 class="main-title">아이들을 위한 <span class="strong-text">똑</span><span class="strong-text">똑</span>한 용돈 관리</h2>
+                                <h1 class="moamoa-title-index">모아모아</h1>                           </div>
+
+                            <!-- 해시태그 -->
+                            <div class="tag-section">
+                                <span class="tag">#용돈기입장</span>
+                                <span class="tag">#금융교육</span>
+                                <span class="tag">#저축</span>
+                                <span class="tag">#자산관리</span>
+                            </div>
+
+                            <!-- 설명 -->
+                            <div class="description">
+                                <p>부모님과 함께하는 <strong>페어런트 테크</strong>로<br> 어릴 때부터 금융을 쉽게 배울 수 있어요!</p>
+                            </div>
+
+                            <div>
+                                <div class="row mb-4">
+                                    <div class="col-2">
+                                        <img src="{% static 'webs/images/diary.png' %}" class="lefticon">
+                                    </div>
+                                    <div class="col-10 leftlist">
+                                        <h5>용돈기입장을 찾고 계신가요?</h5>
+                                        <span>아이들이 스스로 수입과 지출을 기록하고, 건전한 금융 습관을 기르도록 도와주는 맞춤형 서비스입니다.</span>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-2">
+                                        <img src="{% static 'webs/images/ai.png' %}" class="lefticon">
+                                    </div>
+                                    <div class="col-10">
+                                        <h5><strong>AI가 금융을 쉽게 설명해줍니다!</strong></h5>
+                                        <span>아이들의 눈높이에 맞춘 간단한 설명으로 금융 개념을 쉽게 이해할 수 있습니다.</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2">
+                                        <img src="{% static 'webs/images/money.png' %}" class="lefticon">
+                                    </div>
+                                    <div class="col-10">
+                                        <h5><strong>저축의 중요성을 배우세요!</strong></h5>
+                                        <span>용돈기입장을 통해 저축과 지출의 균형을 배워보고, 미래를 계획하세요.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 bottom-0 start-0 leftcopy">
+                            <span>엄카회수TF</span> 이영훈, 김기홍, 김경민, 윤율<br>
+                            <span>아이템컬리</span> 공동대표: 김경민, 신송이 | 개인정보책임자 : 김경민 |  사업자등록번호 : 323-55-00655  | 서울특별시 강남구 선릉로8길 22, 101호
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 오른쪽 콘텐츠 영역 -->
+                <div id="app" class="col-lg-5 mx-auto">                    
+                    <a href="https://youtu.be/P7OqX4Nd_LA" target="_blank">
+                        <img src="{% static 'webs/images/how_to_use.png' %}" alt="How to Use" class="how-to-use"/>
+                    </a>
+                    <div id="tooltip" class="speech-bubble">
+                        모아모아 사용방법 보러 가기
+                    </div>
+                    <img src="{% static 'webs/images/moamoa_icon.png' %}" alt="Logo" class="logo">
+                    <div class="container content">
+                        <div class="login-buttons">
+                            <button class="btn kakao-login">카카오톡 로그인</button>
+                            <button class="btn kids-login">키즈 로그인</button>
+                        </div>
+                        <div class="footer-text">
+                            자녀 회원가입을 위해 부모님이 먼저 카카오톡 로그인을 해주세요.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'webs/js/script.js' %}"></script>
+    <script>
+        // 페이지가 로드되면 실행
+        window.onload = function() {
+            const tooltip = document.getElementById('tooltip');
+            const howToUse = document.querySelector('.how-to-use');
+
+            // "How to Use" 이미지를 클릭하면 말풍선 제거
+            howToUse.addEventListener('click', function() {
+                tooltip.style.display = 'none';
+            });
+
+            // 다른 곳을 클릭해도 말풍선이 사라지도록 설정
+            document.body.addEventListener('click', function(event) {
+                if (!event.target.classList.contains('how-to-use')) {
+                    tooltip.style.display = 'none';
+                }
+            });
+        };
+    </script>
+</body>
+</html>
