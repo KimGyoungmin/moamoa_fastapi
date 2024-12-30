@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+
 # 라우터 초기화
 router = APIRouter(
     prefix="/accounts",
