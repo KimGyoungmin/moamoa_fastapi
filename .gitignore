@@ -366,8 +366,16 @@ $RECYCLE.BIN/
 
 # Open AI API KEY
 .env
+config.py
 
 # 업로드된 파일 무시
 uploaded_files/
+
+# db
+alembic.ini
+test.db
+database.db
+alembic
+.schema
 
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,macos,windows,pycharm
