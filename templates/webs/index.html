@@ -1,0 +1,190 @@
+{% extends "webs/base.html" %}
+
+
+{% block extra_head_css %}
+
+<style type="text/css">
+
+    @font-face {
+        font-family: 'EliceDigitalBaeum-Bd';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_elice@1.0/EliceDigitalBaeum-Bd.woff2') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    /* 전체 화면 배경 이미지 설정 */
+    body {
+        background-image: url("{{ url_for('static', path='images/background2.png') }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
+
+    #app {
+        background-color: #FFF3D6;
+        padding: 0;
+        position: relative;
+    }
+
+    .logo {
+        width: 180px;
+        margin: 160px auto;
+        display: block;
+    }
+
+    /* 물결 애니메이션 */
+    @keyframes waveIn {
+        0% {
+            opacity: 0;
+            transform: translateX(-100px) rotate(0deg); /* 왼쪽으로 이동하고, 회전 없음 */
+        }
+        25% {
+            opacity: 0.5;
+            transform: translateX(30px) rotate(10deg); /* 오른쪽으로 이동하고, 살짝 회전 */
+        }
+        50% {
+            opacity: 1;
+            transform: translateX(-20px) rotate(-10deg); /* 왼쪽으로 이동하고, 반대 방향으로 회전 */
+        }
+        75% {
+            transform: translateX(10px) rotate(5deg); /* 다시 오른쪽으로 이동 */
+        }
+        100% {
+            opacity: 1;
+            transform: translateX(0) rotate(0deg); /* 원래 위치로 이동하고, 회전 없음 */
+        }
+    }
+
+    /* 모아모아 타이틀에 애니메이션 적용 */
+    .moamoa-title-index {
+        font-family: 'Jua', sans-serif;
+        color: #ffbd41;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        text-align: center;
+
+        /* 애니메이션 속성 */
+        opacity: 0;
+        animation: waveIn 1.5s ease-out forwards; /* 1.5초 동안 물결 애니메이션 적용 */
+    }
+
+    .how-to-use {
+        width: 30px;
+        height: 30px;
+        margin: 20px;
+        float: right;
+    }
+
+    .speech-bubble {
+        position: absolute;
+        right: 10px;
+        top: 60px;
+        width: 200px;
+        padding: 10px;
+        background-color: #cdedc9;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 14px;
+        z-index: 999;
+        text-align: center;
+    }
+
+    .speech-bubble:before {
+        content: "";
+        position: absolute;
+        top: -20px;
+        right: 20px;
+        border-width: 10px;
+        border-style: solid;
+        border-color: transparent transparent #cdedc9 transparent;
+    }
+</style>
+{% endblock %}
+
+{% block title %}MoaMoa - 홈{% endblock %}
+
+{% block content %}
+
+
+<!-- 오른쪽 콘텐츠 영역 -->
+<a href="https://youtu.be/P7OqX4Nd_LA" target="_blank">
+    <img src="{{ url_for('static', path='images/how_to_use.png') }}" alt="How to Use" class="how-to-use"/>
+</a>
+<div id="tooltip" class="speech-bubble">
+    모아모아 사용방법 보러 가기
+</div>
+<img src="{{ url_for('static', path='images/moamoa_icon.png') }}" alt="Logo" class="logo">
+<div class="container content">
+    <div class="login-buttons">
+        <button class="btn kakao-login">카카오톡 로그인</button>
+        <button class="btn kids-login">키즈 로그인</button>
+    </div>
+    <div class="footer-text">
+        자녀 회원가입을 위해 부모님이 먼저 카카오톡 로그인을 해주세요.
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block extra_footer_script %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', path='js/script.js') }}"></script>
+<script>
+    // 페이지가 로드되면 실행
+    window.onload = function () {
+        const tooltip = document.getElementById('tooltip');
+        const howToUse = document.querySelector('.how-to-use');
+
+        // "How to Use" 이미지를 클릭하면 말풍선 제거
+        howToUse.addEventListener('click', function () {
+            tooltip.style.display = 'none';
+        });
+
+        // 다른 곳을 클릭해도 말풍선이 사라지도록 설정
+        document.body.addEventListener('click', function (event) {
+            if (!event.target.classList.contains('how-to-use')) {
+                tooltip.style.display = 'none';
+            }
+        });
+    };
+</script>
+
+{% endblock %}
+
+
+{% block extra_footer_css %}
+<style>
+    .home-container {
+        text-align: center;
+        padding: 50px 20px;
+    }
+
+    .auth-buttons {
+        margin-top: 30px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 0 10px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+</style>
+{% endblock %}
