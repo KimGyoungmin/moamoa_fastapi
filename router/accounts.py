@@ -1,12 +1,13 @@
 from datetime import datetime, timedelta
-from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Response, File, UploadFile
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from config import REST_API_KEY, CLIENT_SECRET, KAKAO_CALLBACK_URI
-from models import User, UserCreate, UserResponse, ChildResponse, UserUpdate, ParentResponse
-from database import get_db
+from database.models import User
+from schema.request import UserUpdate
+from schema.response import UserResponse, ChildResponse
+from database.connection import get_db
 import httpx
 import hashlib
 import os

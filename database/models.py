@@ -1,13 +1,16 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, DateTime, CheckConstraint
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-from database import Base
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from datetime import datetime, date
 import pytz
 
 # 타임존 설정
 SEOUL_TZ = pytz.timezone("Asia/Seoul")
+
+Base = declarative_base()
+
 
 class User(Base):
     __tablename__ = "users"
@@ -34,38 +37,35 @@ class UserBase(BaseModel):
     username: str
     birthday: Optional[date]
 
-# 키즈 회원가입
-class UserCreate(UserBase):
-    password: str
-    first_name: str
-    profile_image: Optional[str] = None
 
-# 키즈 조회회
-class UserResponse(UserBase):
-    id: int
-    encouragement: Optional[str]
-    first_name: Optional[str]
-    profile_images: Optional[str] = None
+# 월말결산
+class MonthlySummary(Base):
+    __tablename__ = "monthly_summary"
 
-    class Config:
-        from_attributes = True
+    id = Column(Integer, primary_key=True, index=True)
+    # child -> User id(FK)
+    child = Column(Integer, ForeignKey("users.id"), nullable=False)
+    # parent -> User id(FK)
+    parent = Column(Integer, ForeignKey("users.id"), nullable=True)
+    # context -> String
+    context = Column(String, nullable=False)
+    # year -> Integer(Positive)
+    year = Column(Integer, nullable=False)
+    # month -> Integer(Positive)
+    month = Column(Integer, nullable=False)
+    # created_at
+    created_at = Column(
+        DateTime,
+        default=lambda: datetime.now(SEOUL_TZ),
+        nullable=False,
+    )
 
-# 부모가 키즈 정보 확인할 때
-class ChildResponse(UserResponse):
-    parents_id: Optional[int]
+    __table_args__ = (
+        CheckConstraint('year > 0', name='check_year_positive'),
+        CheckConstraint('month > 0 AND month <= 12', name='check_month_range')
+    )
 
-# 키즈 정보 수정
-class UserUpdate(BaseModel):
-    password: Optional[str] = None
-    first_name: Optional[str] = None
-    birthday: Optional[date] = None
-    profile_image: Optional[str] = None
+    child = relationship("User", foreign_keys=[child])
+    parent = relationship("User", foreign_keys=[parent])
 
-# 부모 조회
-class ParentResponse(UserResponse):
-    encouragement: Optional[str]
-    first_name: Optional[str]
-    images: Optional[str]
 
-    class config:
-        from_attribute = True
