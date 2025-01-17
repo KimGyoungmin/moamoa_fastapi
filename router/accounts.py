@@ -8,6 +8,7 @@ from database.models import User
 from schema.request import UserUpdate
 from schema.response import UserResponse, ChildResponse
 from database.connection import get_db
+from services.jwt_service import JWTService
 import httpx
 import hashlib
 import os
@@ -21,33 +22,36 @@ router = APIRouter(
     responses={404: {"description": "찾을 수 없습니다."}},
 )
 
-# JWT 설정
-SECRET_KEY = "your_secret_key" # 추후 변경하기
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 300
-
-# 타임존 설정
-SEOUL_TZ = pytz.timezone("Asia/Seoul")
+# # JWT 설정
+# SECRET_KEY = "your_secret_key" # 추후 변경하기
+# ALGORITHM = "HS256"
+# ACCESS_TOKEN_EXPIRE_MINUTES = 300
+#
+# # 타임존 설정
+# SEOUL_TZ = pytz.timezone("Asia/Seoul")
 
 # JWT 생성
-def create_access_token(data: dict):
-    to_encode = data.copy()
-    expire = datetime.now(SEOUL_TZ) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+# def create_access_token(data: dict):
+#     to_encode = data.copy()
+#     expire = datetime.now(SEOUL_TZ) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+#     to_encode.update({"exp": expire})
+#     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+#     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 # 인증된 사용자 가져오기 함수
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(token: str = Depends(oauth2_scheme),
+                     db: Session = Depends(get_db),
+                     jwt_service: JWTService = Depends(),
+                     ):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt_service.verify_token(token=token)
         username = payload.get("sub")
-        if username is None:
+        if not username:
             raise HTTPException(status_code=401, detail="유효하지 않은 토큰입니다.")
-        user = db.query(User).filter(User.username == username).first()
-        if user is None:
+        user: User | None = db.query(User).filter(User.username == username).first()
+        if not user:
             raise HTTPException(status_code=401, detail="사용자를 찾을 수 없습니다.")
         return user
     except JWTError:
@@ -64,7 +68,7 @@ def kakao_login():
 
 # 카카오 콜백
 @router.get("/auth/kakao/callback")
-def kakao_callback(code: str, db: Session = Depends(get_db)):
+def kakao_callback(code: str, db: Session = Depends(get_db), jwt_service: JWTService = Depends()):
     token_url = "https://kauth.kakao.com/oauth/token"
     data = {
         "grant_type": "authorization_code",
@@ -115,7 +119,7 @@ def kakao_callback(code: str, db: Session = Depends(get_db)):
     db.refresh(user)
 
     token_data = {"sub": user.username}
-    access_token = create_access_token(data=token_data)
+    access_token = jwt_service.create_access_token(data=token_data)
 
     return {
         "message": "로그인 되었습니다.",
@@ -238,12 +242,13 @@ def get_parent(current_user: User = Depends(get_current_user)):
 def child_login(
     username: str,
     password: str,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    jwt_service: JWTService = Depends(),
 ):
     user = db.query(User).filter(User.username == username).first()
     if not user or user.password != password:
         raise HTTPException(status_code=400, detail="사용할 수 없는 아이디나 비밀번호 입니다.")
-    token = create_access_token({"sub": user.username})
+    token = jwt_service.create_access_token({"sub": user.username})
     return {"access_token": token, "token_type": "bearer", "user": UserResponse.model_validate(user)}
 
 # 아이들 로그아웃

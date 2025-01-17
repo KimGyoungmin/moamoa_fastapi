@@ -11,14 +11,14 @@ class JWTService:
         self.token_expire_minutes = token_expire_minutes
         self.seoul_tz = pytz.timezone = "Asia/Seoul"
 
-    def create_accesss_token(self, data: dict) -> str:
+    def create_access_token(self, data: dict) -> str:
         to_encode = data.copy()
         expire = datetime.now(self.seoul_tz) + timedelta(minutes=self.token_expire_minutes)
         to_encode.update({"exp" : expire})
         return jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
 
 
-    def verify_token(self, token: str):
+    def verify_token(self, token: str) -> dict:
         try:
             payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
             return payload
