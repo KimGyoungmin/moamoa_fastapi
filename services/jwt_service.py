@@ -5,11 +5,11 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException
 
 class JWTService:
-    def __init__(self, secret_key: str, algorithm: str = "HS256", token_expire_minutes: int = 300):
-        self.secret_key = "your_secret_key"
+    def __init__(self, secret_key: str = "yekhjr3uj525j2bg2kefkmf", algorithm: str = "HS256", token_expire_minutes: int = 300):
+        self.secret_key = secret_key
         self.algorithm = algorithm
         self.token_expire_minutes = token_expire_minutes
-        self.seoul_tz = pytz.timezone = "Asia/Seoul"
+        self.seoul_tz = pytz.timezone("Asia/Seoul")
 
     def create_access_token(self, data: dict) -> str:
         to_encode = data.copy()

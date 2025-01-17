@@ -44,9 +44,9 @@ class MonthlySummary(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     # child -> User id(FK)
-    child = Column(Integer, ForeignKey("users.id"), nullable=False)
+    child_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     # parent -> User id(FK)
-    parent = Column(Integer, ForeignKey("users.id"), nullable=True)
+    parent_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     # context -> String
     context = Column(String, nullable=False)
     # year -> Integer(Positive)
@@ -65,7 +65,17 @@ class MonthlySummary(Base):
         CheckConstraint('month > 0 AND month <= 12', name='check_month_range')
     )
 
-    child = relationship("User", foreign_keys=[child])
-    parent = relationship("User", foreign_keys=[parent])
+    child = relationship(
+        "User",
+        foreign_keys=[child_id],
+        backref="monthly_expenses",
+        primaryjoin="MonthlySummary.child_id == User.id",
+        )
+    parent = relationship(
+        "User",
+        foreign_keys=[parent_id],
+        backref="child_monthly_summary",
+        primaryjoin="MonthlySummary.parent_id == User.id",
+        )
 
 
