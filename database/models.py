@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, DateTime, CheckConstraint
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Text, DateTime, CheckConstraint, DECIMAL
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from pydantic import BaseModel
@@ -32,6 +32,8 @@ class User(Base):
         DateTime, default=lambda: datetime.now(SEOUL_TZ), onupdate=lambda: datetime.now(SEOUL_TZ), nullable=False
     )
     children = relationship("User", backref="parents", remote_side=[id])
+    diaries = relationship("FinanceDiary", foreign_keys="[FinanaceDiary.child_id", back_populates="child")
+
 
 class UserBase(BaseModel):
     username: str
@@ -44,9 +46,9 @@ class MonthlySummary(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     # child -> User id(FK)
-    child_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    child_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     # parent -> User id(FK)
-    parent_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    parent_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     # context -> String
     context = Column(String, nullable=False)
     # year -> Integer(Positive)
@@ -77,5 +79,29 @@ class MonthlySummary(Base):
         backref="child_monthly_summary",
         primaryjoin="MonthlySummary.parent_id == User.id",
         )
+
+class FinanceDiary(Base):
+    __tablename__ = "finance_diary"
+
+    id = Column(Integer, primary_key=True, index=True)
+    child_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    parent_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    diary_detail = Column(Text)
+    category = Column(String(100))
+    transaction_type = Column(String(7))
+    amount = Column(DECIMAL(10, 2))
+    remaining = Column(Integer, default=0)
+    today = Column(Date)
+    created_at = Column(
+        DateTime, default=lambda: datetime.now(SEOUL_TZ), nullable=False
+    )
+    updated_at = Column(
+        DateTime, default=lambda: datetime.now(SEOUL_TZ), onupdate=lambda: datetime.now(SEOUL_TZ), nullable=False
+    )
+
+    child = relationship("user", foreign_keys=[child_id], back_populates="diaries")
+
+
+
 
 

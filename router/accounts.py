@@ -47,7 +47,7 @@ def get_current_user(token: str = Depends(oauth2_scheme),
                      ):
     try:
         payload = jwt_service.verify_token(token=token)
-        username = payload.get("sub")
+        username: str | None = payload.get("sub")
         if not username:
             raise HTTPException(status_code=401, detail="유효하지 않은 토큰입니다.")
         user: User | None = db.query(User).filter(User.username == username).first()
